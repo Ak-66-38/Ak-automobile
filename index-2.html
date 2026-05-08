@@ -1,0 +1,842 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AK Automobile – Bad Wurzach</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,600;1,9..40,300&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --gold: #C9A84C;
+      --gold-light: #e8c97a;
+      --black: #0a0a0a;
+      --dark: #111111;
+      --dark2: #1a1a1a;
+      --dark3: #222222;
+      --white: #f5f2ee;
+      --gray: #888;
+      --border: rgba(201,168,76,0.2);
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--black);
+      color: var(--white);
+      overflow-x: hidden;
+    }
+
+    /* ─── NOISE OVERLAY ─── */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 9999;
+      opacity: 0.4;
+    }
+
+    /* ─── NAV ─── */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 48px;
+      height: 72px;
+      background: rgba(10,10,10,0.92);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .nav-logo {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 26px;
+      letter-spacing: 3px;
+      color: var(--gold);
+      text-decoration: none;
+    }
+
+    .nav-logo span { color: var(--white); }
+
+    .nav-links {
+      display: flex;
+      gap: 40px;
+      list-style: none;
+    }
+
+    .nav-links a {
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--gray);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+
+    .nav-links a:hover { color: var(--gold); }
+
+    .nav-cta {
+      background: var(--gold);
+      color: var(--black) !important;
+      padding: 10px 22px;
+      font-weight: 600 !important;
+      letter-spacing: 1px !important;
+      transition: background 0.2s !important;
+    }
+
+    .nav-cta:hover { background: var(--gold-light) !important; color: var(--black) !important; }
+
+    /* ─── HERO ─── */
+    #hero {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 120px 48px 80px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-bg {
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 70% 60% at 80% 50%, rgba(201,168,76,0.07) 0%, transparent 70%),
+        radial-gradient(ellipse 40% 50% at 20% 80%, rgba(201,168,76,0.04) 0%, transparent 60%);
+    }
+
+    .hero-line {
+      position: absolute;
+      left: 0; right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--gold), transparent);
+      opacity: 0.3;
+    }
+    .hero-line.top { top: 110px; }
+    .hero-line.bottom { bottom: 80px; }
+
+    .hero-seit {
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 24px;
+      opacity: 0;
+      animation: fadeUp 0.8s 0.2s forwards;
+    }
+
+    .hero-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(72px, 12vw, 160px);
+      line-height: 0.9;
+      letter-spacing: 2px;
+      color: var(--white);
+      opacity: 0;
+      animation: fadeUp 0.8s 0.4s forwards;
+    }
+
+    .hero-title .gold { color: var(--gold); }
+
+    .hero-sub {
+      margin-top: 32px;
+      font-size: 18px;
+      font-weight: 300;
+      color: var(--gray);
+      max-width: 480px;
+      line-height: 1.7;
+      opacity: 0;
+      animation: fadeUp 0.8s 0.6s forwards;
+    }
+
+    .hero-actions {
+      margin-top: 48px;
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+      opacity: 0;
+      animation: fadeUp 0.8s 0.8s forwards;
+    }
+
+    .btn-primary {
+      background: var(--gold);
+      color: var(--black);
+      padding: 16px 36px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 14px;
+      font-weight: 600;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      text-decoration: none;
+      border: none;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.2s;
+      display: inline-block;
+    }
+
+    .btn-primary:hover { background: var(--gold-light); transform: translateY(-2px); }
+
+    .btn-outline {
+      background: transparent;
+      color: var(--white);
+      padding: 16px 36px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 14px;
+      font-weight: 600;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      text-decoration: none;
+      border: 1px solid rgba(245,242,238,0.3);
+      cursor: pointer;
+      transition: border-color 0.2s, color 0.2s;
+      display: inline-block;
+    }
+
+    .btn-outline:hover { border-color: var(--gold); color: var(--gold); }
+
+    .hero-stats {
+      position: absolute;
+      right: 48px;
+      bottom: 100px;
+      display: flex;
+      flex-direction: column;
+      gap: 32px;
+      opacity: 0;
+      animation: fadeIn 1s 1s forwards;
+    }
+
+    .stat {
+      text-align: right;
+    }
+
+    .stat-num {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 48px;
+      color: var(--gold);
+      line-height: 1;
+    }
+
+    .stat-label {
+      font-size: 11px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--gray);
+    }
+
+    /* ─── SECTIONS ─── */
+    section {
+      padding: 100px 48px;
+    }
+
+    .section-tag {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 16px;
+    }
+
+    .section-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(40px, 6vw, 80px);
+      line-height: 1;
+      letter-spacing: 1px;
+      color: var(--white);
+      margin-bottom: 48px;
+    }
+
+    .divider {
+      width: 60px;
+      height: 2px;
+      background: var(--gold);
+      margin-bottom: 48px;
+    }
+
+    /* ─── ILANLAR ─── */
+    #ilanlar { background: var(--dark2); }
+
+    .ilanlar-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2px;
+      margin-bottom: 48px;
+    }
+
+    .ilan-card {
+      background: var(--dark3);
+      padding: 40px;
+      border: 1px solid var(--border);
+      transition: border-color 0.3s, transform 0.3s;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .ilan-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0;
+      width: 3px;
+      height: 0;
+      background: var(--gold);
+      transition: height 0.3s;
+    }
+
+    .ilan-card:hover::before { height: 100%; }
+    .ilan-card:hover { border-color: rgba(201,168,76,0.5); transform: translateY(-4px); }
+
+    .ilan-icon {
+      font-size: 32px;
+      margin-bottom: 20px;
+    }
+
+    .ilan-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 28px;
+      letter-spacing: 1px;
+      color: var(--white);
+      margin-bottom: 12px;
+    }
+
+    .ilan-desc {
+      font-size: 14px;
+      color: var(--gray);
+      line-height: 1.7;
+    }
+
+    .ilan-main {
+      grid-column: 1 / -1;
+      background: linear-gradient(135deg, var(--dark3) 0%, rgba(201,168,76,0.06) 100%);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 40px;
+    }
+
+    .ilan-main .ilan-content { flex: 1; }
+    .ilan-main .ilan-action { flex-shrink: 0; }
+
+    /* ─── GALERİ ─── */
+    #galeri { background: var(--black); }
+
+    .galeri-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2px;
+    }
+
+    .galeri-item {
+      aspect-ratio: 4/3;
+      background: var(--dark3);
+      border: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 48px;
+      position: relative;
+      overflow: hidden;
+      cursor: pointer;
+      transition: transform 0.3s;
+    }
+
+    .galeri-item:hover { transform: scale(1.02); z-index: 2; }
+
+    .galeri-item.tall { grid-row: span 2; aspect-ratio: auto; }
+
+    .galeri-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to top, rgba(0,0,0,0.7) 0%, transparent 60%);
+      display: flex;
+      align-items: flex-end;
+      padding: 20px;
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+
+    .galeri-item:hover .galeri-overlay { opacity: 1; }
+
+    .galeri-label {
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--gold);
+    }
+
+    .galeri-placeholder {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+      color: var(--border);
+    }
+
+    .galeri-placeholder span {
+      font-size: 13px;
+      letter-spacing: 1px;
+      color: #444;
+    }
+
+    .galeri-note {
+      margin-top: 24px;
+      text-align: center;
+      font-size: 13px;
+      color: var(--gray);
+      font-style: italic;
+    }
+
+    /* ─── HAKKIMIZDA ─── */
+    #hakkimizda { background: var(--dark2); }
+
+    .hakkimizda-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 80px;
+      align-items: center;
+    }
+
+    .hakkimizda-text p {
+      font-size: 16px;
+      font-weight: 300;
+      color: var(--gray);
+      line-height: 1.9;
+      margin-bottom: 20px;
+    }
+
+    .hakkimizda-text p strong {
+      color: var(--white);
+      font-weight: 600;
+    }
+
+    .values {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2px;
+    }
+
+    .value-item {
+      background: var(--dark3);
+      border: 1px solid var(--border);
+      padding: 28px;
+      transition: border-color 0.3s;
+    }
+
+    .value-item:hover { border-color: var(--gold); }
+
+    .value-icon { font-size: 28px; margin-bottom: 12px; }
+
+    .value-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 20px;
+      letter-spacing: 1px;
+      color: var(--gold);
+      margin-bottom: 8px;
+    }
+
+    .value-desc {
+      font-size: 13px;
+      color: var(--gray);
+      line-height: 1.6;
+    }
+
+    /* ─── İLETİŞİM ─── */
+    #iletisim { background: var(--black); }
+
+    .iletisim-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2px;
+    }
+
+    .contact-card {
+      background: var(--dark3);
+      border: 1px solid var(--border);
+      padding: 40px;
+      transition: border-color 0.3s;
+    }
+
+    .contact-card:hover { border-color: var(--gold); }
+
+    .contact-icon { font-size: 32px; margin-bottom: 20px; }
+
+    .contact-label {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 8px;
+    }
+
+    .contact-value {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 28px;
+      letter-spacing: 1px;
+      color: var(--white);
+      text-decoration: none;
+      display: block;
+      transition: color 0.2s;
+    }
+
+    .contact-value:hover { color: var(--gold); }
+
+    .contact-sub {
+      font-size: 13px;
+      color: var(--gray);
+      margin-top: 6px;
+    }
+
+    .map-card {
+      grid-column: 1 / -1;
+      background: var(--dark3);
+      border: 1px solid var(--border);
+      padding: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 40px;
+    }
+
+    .map-info h3 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 32px;
+      color: var(--white);
+      letter-spacing: 1px;
+      margin-bottom: 8px;
+    }
+
+    .map-info p {
+      font-size: 15px;
+      color: var(--gray);
+      line-height: 1.7;
+    }
+
+    /* ─── FOOTER ─── */
+    footer {
+      background: var(--dark2);
+      border-top: 1px solid var(--border);
+      padding: 40px 48px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .footer-logo {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 22px;
+      letter-spacing: 3px;
+      color: var(--gold);
+    }
+
+    .footer-logo span { color: var(--white); }
+
+    .footer-text {
+      font-size: 12px;
+      color: var(--gray);
+      letter-spacing: 1px;
+    }
+
+    .footer-seit {
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: var(--gold);
+      opacity: 0.6;
+    }
+
+    /* ─── ANIMATIONS ─── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    /* ─── SCROLL REVEAL ─── */
+    .reveal {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: opacity 0.7s ease, transform 0.7s ease;
+    }
+
+    .reveal.visible {
+      opacity: 1;
+      transform: none;
+    }
+
+    /* ─── MOBILE ─── */
+    @media (max-width: 768px) {
+      nav { padding: 0 20px; }
+      .nav-links { display: none; }
+      section { padding: 70px 20px; }
+      #hero { padding: 110px 20px 80px; }
+      .hero-stats { display: none; }
+      .ilanlar-grid { grid-template-columns: 1fr; }
+      .ilan-main { flex-direction: column; }
+      .galeri-grid { grid-template-columns: 1fr 1fr; }
+      .galeri-item.tall { grid-row: span 1; aspect-ratio: 4/3; }
+      .hakkimizda-grid { grid-template-columns: 1fr; gap: 40px; }
+      .iletisim-grid { grid-template-columns: 1fr; }
+      .map-card { flex-direction: column; }
+      footer { flex-direction: column; gap: 12px; text-align: center; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="#hero" class="nav-logo">AK <span>Automobile</span></a>
+  <ul class="nav-links">
+    <li><a href="#ilanlar">İlanlar</a></li>
+    <li><a href="#galeri">Galeri</a></li>
+    <li><a href="#hakkimizda">Hakkımızda</a></li>
+    <li><a href="#iletisim" class="nav-cta">İletişim</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-line top"></div>
+  <div class="hero-line bottom"></div>
+
+  <div class="hero-seit">Seit 2021 · Bad Wurzach</div>
+  <h1 class="hero-title">
+    AK<br><span class="gold">Auto</span><br>mobile
+  </h1>
+  <p class="hero-sub">
+    Ihr zuverlässiger Automobilhändler in Bad Wurzach. Qualitätsfahrzeuge zu fairen Preisen — persönlich und kompetent.
+  </p>
+  <div class="hero-actions">
+    <a href="https://www.kleinanzeigen.de/s-bestandsliste.html?userId=85326168" target="_blank" class="btn-primary">Alle Fahrzeuge</a>
+    <a href="#iletisim" class="btn-outline">Kontakt</a>
+  </div>
+
+  <div class="hero-stats">
+    <div class="stat">
+      <div class="stat-num">100+</div>
+      <div class="stat-label">Verkaufte Fahrzeuge</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">4+</div>
+      <div class="stat-label">Jahre Erfahrung</div>
+    </div>
+  </div>
+</section>
+
+<!-- İLANLAR -->
+<section id="ilanlar">
+  <div class="reveal">
+    <div class="section-tag">Fahrzeuge</div>
+    <h2 class="section-title">Aktuelle Angebote</h2>
+    <div class="divider"></div>
+  </div>
+
+  <div class="ilanlar-grid reveal">
+    <div class="ilan-card ilan-main">
+      <div class="ilan-content">
+        <div class="ilan-icon">🚗</div>
+        <div class="ilan-title">Alle Fahrzeuge auf Kleinanzeigen</div>
+        <p class="ilan-desc">
+          Unsere komplette und stets aktuelle Fahrzeugauswahl finden Sie direkt auf Kleinanzeigen. PKW, Kombi, SUV und mehr — zu ehrlichen Preisen.
+        </p>
+      </div>
+      <div class="ilan-action">
+        <a href="https://www.kleinanzeigen.de/s-bestandsliste.html?userId=85326168" target="_blank" class="btn-primary">Jetzt ansehen →</a>
+      </div>
+    </div>
+
+    <div class="ilan-card">
+      <div class="ilan-icon">🔍</div>
+      <div class="ilan-title">Wunschfahrzeug</div>
+      <p class="ilan-desc">Ihr Traumwagen ist nicht dabei? Sprechen Sie uns an — wir helfen Ihnen bei der Suche.</p>
+    </div>
+
+    <div class="ilan-card">
+      <div class="ilan-icon">🤝</div>
+      <div class="ilan-title">Ankauf & Inzahlungnahme</div>
+      <p class="ilan-desc">Wir kaufen Ihr Fahrzeug zu marktgerechten Preisen an oder rechnen es bei Neukauf an.</p>
+    </div>
+  </div>
+</section>
+
+<!-- GALERİ -->
+<section id="galeri">
+  <div class="reveal">
+    <div class="section-tag">Galerie</div>
+    <h2 class="section-title">Impressionen</h2>
+    <div class="divider"></div>
+  </div>
+
+  <div class="galeri-grid reveal">
+    <div class="galeri-item tall">
+      <div class="galeri-placeholder">
+        <span style="font-size:48px">🏪</span>
+        <span>Betrieb</span>
+      </div>
+      <div class="galeri-overlay"><span class="galeri-label">Unser Betrieb</span></div>
+    </div>
+    <div class="galeri-item">
+      <div class="galeri-placeholder">
+        <span style="font-size:48px">🚘</span>
+        <span>Fahrzeug 1</span>
+      </div>
+      <div class="galeri-overlay"><span class="galeri-label">Fahrzeug</span></div>
+    </div>
+    <div class="galeri-item">
+      <div class="galeri-placeholder">
+        <span style="font-size:48px">🚙</span>
+        <span>Fahrzeug 2</span>
+      </div>
+      <div class="galeri-overlay"><span class="galeri-label">Fahrzeug</span></div>
+    </div>
+    <div class="galeri-item">
+      <div class="galeri-placeholder">
+        <span style="font-size:48px">🚗</span>
+        <span>Fahrzeug 3</span>
+      </div>
+      <div class="galeri-overlay"><span class="galeri-label">Fahrzeug</span></div>
+    </div>
+    <div class="galeri-item">
+      <div class="galeri-placeholder">
+        <span style="font-size:48px">🔧</span>
+        <span>Service</span>
+      </div>
+      <div class="galeri-overlay"><span class="galeri-label">Service</span></div>
+    </div>
+  </div>
+  <p class="galeri-note reveal">📸 Fotos können einfach ausgetauscht werden — senden Sie uns Ihre Bilder.</p>
+</section>
+
+<!-- HAKKIMIZDA -->
+<section id="hakkimizda">
+  <div class="reveal">
+    <div class="section-tag">Über Uns</div>
+    <h2 class="section-title">Wer wir sind</h2>
+    <div class="divider"></div>
+  </div>
+
+  <div class="hakkimizda-grid">
+    <div class="hakkimizda-text reveal">
+      <p>
+        <strong>AK Automobile</strong> ist ein inhabergeführtes Autohaus in Bad Wurzach, das seit <strong>2021</strong> für faire Preise, Ehrlichkeit und persönlichen Service steht.
+      </p>
+      <p>
+        Unter dem Namen <strong>Inh. Fa. Afacan</strong> haben wir uns in der Region als verlässlicher Ansprechpartner rund ums Fahrzeug etabliert. Ob Kauf, Verkauf oder Beratung — wir sind für Sie da.
+      </p>
+      <p>
+        Wir legen großen Wert auf Transparenz und langfristige Kundenbeziehungen. Jedes Fahrzeug wird sorgfältig geprüft und zu einem fairen Marktpreis angeboten.
+      </p>
+    </div>
+
+    <div class="values reveal">
+      <div class="value-item">
+        <div class="value-icon">✅</div>
+        <div class="value-title">Qualität</div>
+        <p class="value-desc">Geprüfte Fahrzeuge, keine versteckten Mängel.</p>
+      </div>
+      <div class="value-item">
+        <div class="value-icon">💎</div>
+        <div class="value-title">Ehrlichkeit</div>
+        <p class="value-desc">Transparente Preise & offene Kommunikation.</p>
+      </div>
+      <div class="value-item">
+        <div class="value-icon">🤝</div>
+        <div class="value-title">Vertrauen</div>
+        <p class="value-desc">Seit 2021 ein verlässlicher Partner in der Region.</p>
+      </div>
+      <div class="value-item">
+        <div class="value-icon">⚡</div>
+        <div class="value-title">Schnell</div>
+        <p class="value-desc">Unkomplizierte Abwicklung, kurze Wege.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- İLETİŞİM -->
+<section id="iletisim">
+  <div class="reveal">
+    <div class="section-tag">Kontakt</div>
+    <h2 class="section-title">Erreichen Sie uns</h2>
+    <div class="divider"></div>
+  </div>
+
+  <div class="iletisim-grid reveal">
+    <div class="contact-card">
+      <div class="contact-icon">📞</div>
+      <div class="contact-label">Telefon / WhatsApp</div>
+      <a href="tel:+491762354288" class="contact-value">0176 235 42 881</a>
+      <p class="contact-sub">Rufen Sie uns an oder schreiben Sie uns auf WhatsApp</p>
+    </div>
+
+    <div class="contact-card">
+      <div class="contact-icon">📍</div>
+      <div class="contact-label">Standort</div>
+      <a href="https://maps.google.com/?q=Glashüttenweg+11,+88410+Bad+Wurzach" target="_blank" class="contact-value" style="font-size:18px">Glashüttenweg 11</a>
+      <p class="contact-sub">88410 Bad Wurzach, Baden-Württemberg</p>
+    </div>
+
+    <div class="contact-card">
+      <div class="contact-icon">🛒</div>
+      <div class="contact-label">Kleinanzeigen Profil</div>
+      <a href="https://www.kleinanzeigen.de/s-bestandsliste.html?userId=85326168" target="_blank" class="contact-value" style="font-size:18px">Alle Fahrzeuge ansehen</a>
+      <p class="contact-sub">Alle aktuellen Angebote auf einen Blick</p>
+    </div>
+
+    <div class="contact-card">
+      <div class="contact-icon">🕐</div>
+      <div class="contact-label">Öffnungszeiten</div>
+      <span class="contact-value" style="cursor:default; font-size:20px">Nach Vereinbarung</span>
+      <p class="contact-sub">Flexibel & termingerecht für Sie da</p>
+    </div>
+
+    <div class="map-card">
+      <div class="map-info">
+        <h3>AK Automobile — Bad Wurzach</h3>
+        <p>Inh. Fa. Afacan · Seit 2021<br>Glashüttenweg 11, 88410 Bad Wurzach<br>📞 0176 235 42 881</p>
+      </div>
+      <a href="https://www.kleinanzeigen.de/s-bestandsliste.html?userId=85326168" target="_blank" class="btn-primary">Zu unseren Angeboten →</a>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">AK <span>Automobile</span></div>
+  <div class="footer-text">© 2025 AK Automobile · Inh. Fa. Afacan · Bad Wurzach</div>
+  <div class="footer-seit">Seit 2021</div>
+</footer>
+
+<script>
+  // Scroll reveal
+  const reveals = document.querySelectorAll('.reveal');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((entry, i) => {
+      if (entry.isIntersecting) {
+        setTimeout(() => entry.target.classList.add('visible'), i * 100);
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.1 });
+  reveals.forEach(el => observer.observe(el));
+</script>
+
+</body>
+</html>
